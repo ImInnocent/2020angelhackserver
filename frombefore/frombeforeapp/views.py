@@ -34,7 +34,8 @@ def message(request):
                 if message:
                     break
 
-        return render(request, 'frombeforeapp/index.html', { 'message': message })
+        return JsonResponse(json.dumps(message.as_dict(), ensure_ascii=False), safe=False)
+        # return render(request, 'frombeforeapp/index.html', { 'message': message })
 
 def test(request):
     if request.method == "POST":
