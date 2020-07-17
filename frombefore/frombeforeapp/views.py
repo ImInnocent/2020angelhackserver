@@ -5,6 +5,7 @@ from django.core import serializers
 from django.db.models import Max
 from .models import Message
 import random
+import json
 
 # Create your views here.
 def message(request):
