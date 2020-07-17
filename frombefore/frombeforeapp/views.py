@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponse, JsonResponse, Http404
 from django.views import generic
 from django.core import serializers
@@ -37,4 +37,17 @@ def message(request):
         return render(request, 'frombeforeapp/index.html', { 'message': message })
 
 def test(request):
-    return render(request, 'frombeforeapp/text.html')
+    if request.method == "POST":
+        try:
+            dday = request.POST.get('dday')
+            text = request.POST.get('text')
+
+            new_message = Message(dday=dday, text=text)
+            new_message.save()
+        except ObjectDoesNotExist:
+            return Http404("dday or text not exist")
+
+        return redirect('test')
+        # return HttpResponse("ok")
+    else:
+        return render(request, 'frombeforeapp/test.html')

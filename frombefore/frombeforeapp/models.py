@@ -7,3 +7,9 @@ class Message(models.Model):
 
     # def __str__(self):
     #     return f"D-{dday}: {text}"
+    def as_dict(self):
+        return {
+            "dday": self.dday,
+            "text": self.text,
+            # other stuff
+        }
