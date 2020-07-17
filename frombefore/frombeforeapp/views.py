@@ -1,24 +1,40 @@
 from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, Http404
 from django.views import generic
 from django.core import serializers
+from django.db.models import Max
 from .models import Message
+import random
 
 # Create your views here.
-class IndexView(generic.ListView):
-    def get(self, request):
-        # messages = serializers.serialize('json', Message.objects.all()[:5])
-        messages = [dict(m) for m in Message.objects.all()[:5].values()]
+def message(request):
+    if request.method == "POST":
+        try:
+            dday = request.POST.get('dday')
+            text = request.POST.get('text')
 
-        return render(request, 'frombeforeapp/index.html', { 'messages': messages })
-        # return JsonResponse(messages, safe=False)
+            new_message = Message(dday=dday, text=text)
+            new_message.save()
+        except ObjectDoesNotExist:
+            return Http404("dday or text not exist")
 
-    def post(self, request):
-        print("Post 요청을 잘받았다")
-        return HttpResponse("Post 요청을 잘받았다")
+        return HttpResponse("ok")
+    else:
+        target_dday = int(request.GET.get('dday', '-1'))
 
-    def put(self, request):
-        return HttpResponse("Put 요청을 잘받았다")
+        if target_dday >= 0:         
+            message = Message.objects.filter(dday=target_dday).order_by("?").first()
+        else:
+            max_id = Message.objects.all().aggregate(max_id=Max("id"))['max_id']
 
-    def delete(self, request):
-        return HttpResponse("Delete 요청을 잘받았다")
+            while True:
+                pk = random.randint(1, max_id)
+                message = Message.objects.filter(pk=pk).first()
+
+                if message:
+                    break
+
+        return render(request, 'frombeforeapp/index.html', { 'message': message })
+
+def test(request):
+    return render(request, 'frombeforeapp/text.html')

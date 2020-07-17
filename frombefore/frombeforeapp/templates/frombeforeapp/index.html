@@ -5,18 +5,23 @@
     <body>
         <div>
             <!-- {{ messages }} -->
-            {% if messages %}
+            {% if message %}
                 <table style="width:100%;">
                     <tr style="width: 30%; background-color: #555555; color: #fff;">
                         <th>D-Day</th>
                         <th>응원 문구</th>
                     </tr>
-                    {% for message in messages %}
+                    <!-- {% for message in messages %}
                         <tr style="border: 1px solid black;">
                             <th>{{ message.dday }}</th>
                             <th>{{ message.text }}</th>
                         </tr>
-                    {% endfor %}
+                    {% endfor %} -->
+                    
+                    <tr style="border: 1px solid black;">
+                        <th>{{ message.dday }}</th>
+                        <th>{{ message.text }}</th>
+                    </tr>
                 </table>
             {% else %}
                 <p>No messages.</p>
