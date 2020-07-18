@@ -106,7 +106,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 DATABASE_OPTIONS = {'charset': 'utf8'}
 
-LANGUAGE_CODE = 'ko-kr'
+LANGUAGE_CODE = 'ko'
 
 TIME_ZONE = 'UTC'
 
