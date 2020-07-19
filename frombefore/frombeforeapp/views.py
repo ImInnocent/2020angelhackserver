@@ -6,8 +6,10 @@ from django.db.models import Max
 from .models import Message
 import random
 import json
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
+@csrf_exempt
 def message(request):
     if request.method == "POST":
         try:
@@ -38,6 +40,7 @@ def message(request):
         return JsonResponse(json.dumps(message.as_dict(), ensure_ascii=False), safe=False)
         # return render(request, 'frombeforeapp/index.html', { 'message': message })
 
+@csrf_exempt
 def test(request):
     if request.method == "POST":
         try:
