@@ -13,5 +13,5 @@ class Message(models.Model):
         return {
             "dday": self.dday,
             "text": self.text,
-            "edit_date": self.edit_date,
+            "edit_date": self.edit_date.strftime('%Y-%m-%d'),
         }
