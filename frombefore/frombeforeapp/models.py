@@ -5,6 +5,7 @@ from datetime import datetime
 class Message(models.Model):
     dday = models.IntegerField(default=0)
     text = models.CharField(max_length=400)
+    subject = models.CharField(max_length=40, default='대학 입시')
     edit_date = models.DateTimeField(default=datetime.now)
 
     # def __str__(self):
@@ -13,5 +14,6 @@ class Message(models.Model):
         return {
             "dday": self.dday,
             "text": self.text,
+            "subject": self.subject,
             "edit_date": self.edit_date.strftime('%Y-%m-%d'),
         }

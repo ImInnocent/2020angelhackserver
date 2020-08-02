@@ -15,8 +15,9 @@ def message(request):
         try:
             dday = request.POST.get('dday')
             text = request.POST.get('text')
+            subject = request.POST.get('subject')
 
-            new_message = Message(dday=dday, text=text)
+            new_message = Message(dday=dday, text=text, subject=subject)
             new_message.save()
         except ObjectDoesNotExist:
             return Http404("dday or text not exist")
@@ -24,9 +25,11 @@ def message(request):
         return HttpResponse("ok")
     else:
         target_dday = int(request.GET.get('dday', '-1'))
+        # default to 
+        target_subject = request.GET.get('subject', '대학 입시')
 
         if target_dday >= 0:         
-            message = Message.objects.filter(dday=target_dday).order_by("?").first()
+            message = Message.objects.filter(dday=target_dday, subject=target_subject).order_by("?").first()
         else:
             max_id = Message.objects.all().aggregate(max_id=Max("id"))['max_id']
 
