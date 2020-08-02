@@ -13,9 +13,11 @@ from django.views.decorators.csrf import csrf_exempt
 def message(request):
     if request.method == "POST":
         try:
-            dday = request.POST.get('dday')
-            text = request.POST.get('text')
-            subject = request.POST.get('subject')
+            string_body = request.body.decode('utf8').replace("'", '"')
+            json_body = json.loads(string_body)
+            dday = json_body.get('dday')
+            text = json_body.get('text')
+            subject = json_body.get('subject')
 
             new_message = Message(dday=dday, text=text, subject=subject)
             new_message.save()
