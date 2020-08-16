@@ -5,6 +5,8 @@ from . import views
 urlpatterns = [
     # ex: /frombefore/
     path('', views.message, name='index'),
+    # ex: /frombefore/user
+    path('user', views.user, name='user'),
     # ex: /frombefore/test
     path('test', views.test, name='test'),
 ]

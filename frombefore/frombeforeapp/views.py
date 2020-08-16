@@ -3,10 +3,13 @@ from django.http import HttpResponse, JsonResponse, Http404
 from django.views import generic
 from django.core import serializers
 from django.db.models import Max
-from .models import Message
+from .models import Message, UserData
 import random
 import json
 from django.views.decorators.csrf import csrf_exempt
+
+def standardResponse(json):
+    return JsonResponse(json.dumps(message.as_dict(), ensure_ascii=False), safe=False)
 
 # Create your views here.
 @csrf_exempt
@@ -28,22 +31,41 @@ def message(request):
     else:
         target_dday = int(request.GET.get('dday', '-1'))
         # default to 
-        target_subject = request.GET.get('subject', '대학 입시')
+        target_subject = request.GET.get('subject', 'college')
+
+        message = None
 
         if target_dday >= 0:         
             message = Message.objects.filter(dday=target_dday, subject=target_subject).order_by("?").first()
+
+            if message is None:
+                message = Message.objects.filter(subject=target_subject).order_by("?").first()
+
+            if message is None:
+                message = Message.objects.all().order_by("?").first()
         else:
             max_id = Message.objects.all().aggregate(max_id=Max("id"))['max_id']
 
             while True:
                 pk = random.randint(1, max_id)
-                message = Message.objects.filter(pk=pk).first()
+                message = Message.objects.filter(subject=target_subject).first()
 
-                if message:
+                if message is not None:
                     break
 
-        return JsonResponse(json.dumps(message.as_dict(), ensure_ascii=False), safe=False)
+        return standardResponse(json)
+        # return JsonResponse(json.dumps(message.as_dict(), ensure_ascii=False), safe=False)
         # return render(request, 'frombeforeapp/index.html', { 'message': message })
+
+@csrf_exempt
+def user(request):
+    if (request.method == "GET"):
+        target_uuid = request.GET.get("uuid", "none")
+        target_user = get_object_or_404(UserData, pk=target_uuid)
+
+        return standardResponse(target_user)
+    else:
+        return HttpResponse("ok")
 
 @csrf_exempt
 def test(request):
