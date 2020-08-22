@@ -11,13 +11,15 @@ from django.views.decorators.csrf import csrf_exempt
 def standardResponse(json):
     return JsonResponse(json.dumps(message.as_dict(), ensure_ascii=False), safe=False)
 
+def standardRequest(jsonStr):
+    return json.loads(jsonStr.decode('utf8').replace("'", '"'))
+
 # Create your views here.
 @csrf_exempt
 def message(request):
     if request.method == "POST":
         try:
-            string_body = request.body.decode('utf8').replace("'", '"')
-            json_body = json.loads(string_body)
+            json_body = standardRequest(request.body)
             dday = json_body.get('dday')
             text = json_body.get('text')
             subject = json_body.get('subject')
@@ -65,6 +67,16 @@ def user(request):
 
         return standardResponse(target_user)
     else:
+        try:
+            json_body = standardRequest(request.body)
+            uuid = json_body.get('uuid')
+            subject = json_body.get('subject')
+
+            new_user = UserData(uuid=uuid, subject=subject)
+            new_user.save()
+        except ObjectDoesNotExist:
+            return Http404("dday or text not exist")
+
         return HttpResponse("ok")
 
 @csrf_exempt
